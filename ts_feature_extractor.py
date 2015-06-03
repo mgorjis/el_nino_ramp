@@ -1,3 +1,5 @@
+input numpy as np
+
 en_lat_bottom = -5
 en_lat_top = 5
 en_lon_left = 360-170
