@@ -12,15 +12,24 @@ class FeatureExtractor(object):
     def __init__(self):
         pass
 
-    def transform(self, temperatures_xray, n_burn_in, n_lookahead, skf_is):
-        """Compute the single variable of mean temperatures in the El Nino 3.4 
+    def transform(self, temperatures_xray, n_burn_in, n_lookahead):
+        """Compute the single variable of montly means corresponding to the  temperatures in the El Nino 3.4 
         region."""
         # This is the range for which features should be provided. Strip
         # the burn-in from the beginning and the prediction look-ahead from
         # the end.
-        valid_range = range(
-            n_burn_in, temperatures_xray['time'].shape[0] - n_lookahead)
+        valid_range = range(n_burn_in, temperatures_xray['time'].shape[0] - n_lookahead)
         enso = get_enso_mean(temperatures_xray['tas'])
-        enso_valid = enso.values[valid_range]
-        X_array = enso_valid.reshape((enso_valid.shape[0], 1))
-        return X_array
+        # reshape the vector into a table years as rows, months as columns
+        enso_matrix = enso.values.reshape((-1,12))
+        count_matrix = np.ones(enso_matrix.shape)
+        # compute cumulative means of columns (remember that you can only use
+        # the past at each time point) and reshape it into a vector
+        enso_monthly_mean = (enso_matrix.cumsum(axis=0) / count_matrix.cumsum(axis=0)).ravel()
+        # roll it backwards (6 months) so it corresponds to the month of the target
+        enso_monthly_mean_rolled = np.roll(enso_monthly_mean, n_lookahead - 12)
+        # select valid range
+        enso_monthly_mean_valid = enso_monthly_mean_rolled[valid_range]
+        # reshape it into a matrix of a single column
+        X = enso_monthly_mean_valid.reshape((enso_monthly_mean_valid.shape[0], 1))
+        return X
