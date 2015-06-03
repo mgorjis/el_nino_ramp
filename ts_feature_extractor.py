@@ -12,7 +12,7 @@ class FeatureExtractor(object):
     def __init__(self):
         pass
 
-    def transform(self, temperatures_xray, n_burn_in, n_lookahead):
+    def transform(self, temperatures_xray, n_burn_in, n_lookahead, skf_is):
         """Compute the single variable of montly means corresponding to the  temperatures in the El Nino 3.4 
         region."""
         # This is the range for which features should be provided. Strip
