@@ -1,4 +1,4 @@
-input numpy as np
+import numpy as np
 
 en_lat_bottom = -5
 en_lat_top = 5
