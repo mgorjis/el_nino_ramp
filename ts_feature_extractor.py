@@ -15,8 +15,8 @@ class FeatureExtractor(object):
         pass
 
     def transform(self, temperatures_xray, n_burn_in, n_lookahead, skf_is):
-        """Compute the single variable of montly means corresponding to the  temperatures in the El Nino 3.4 
-        region."""
+        """Combine two variables: the montly means corresponding to the month of the target and 
+        the current mean temperature in the El Nino 3.4 region."""
         # This is the range for which features should be provided. Strip
         # the burn-in from the beginning and the prediction look-ahead from
         # the end.
@@ -32,6 +32,6 @@ class FeatureExtractor(object):
         enso_monthly_mean_rolled = np.roll(enso_monthly_mean, n_lookahead - 12)
         # select valid range
         enso_monthly_mean_valid = enso_monthly_mean_rolled[valid_range]
-        # reshape it into a matrix of a single column
-        X = enso_monthly_mean_valid.reshape((enso_monthly_mean_valid.shape[0], 1))
+        enso_valid = enso.values[valid_range]
+        X = np.array([enso_valid, enso_monthly_mean_valid]).T
         return X
