@@ -1,17 +1,3 @@
-import numpy as np
-
-en_lat_bottom = -5
-en_lat_top = 5
-en_lon_left = 360 - 170
-en_lon_right = 360 - 120
-
-def get_area_mean(tas, lat_bottom, lat_top, lon_left, lon_right):
-    """The array of mean temperatures in a region at all time points."""
-    return tas.loc[:, lat_bottom:lat_top, lon_left:lon_right].mean(dim=('lat','lon'))
-
-def get_enso_mean(tas):
-    """The array of mean temperatures in the El Nino 3.4 region at all time points."""
-    return get_area_mean(tas, en_lat_bottom, en_lat_top, en_lon_left, en_lon_right)
 
 class FeatureExtractor(object):
 
@@ -29,4 +15,4 @@ class FeatureExtractor(object):
         enso_valid = enso.values[valid_range]
         X = enso_valid.reshape((enso_valid.shape[0], 1))
         # trying to cheat by looking ahead
-        return np.roll(X, -6)
+        return X
